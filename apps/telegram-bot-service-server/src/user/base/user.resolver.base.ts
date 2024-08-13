@@ -20,6 +20,10 @@ import { UserFindUniqueArgs } from "./UserFindUniqueArgs";
 import { CreateUserArgs } from "./CreateUserArgs";
 import { UpdateUserArgs } from "./UpdateUserArgs";
 import { DeleteUserArgs } from "./DeleteUserArgs";
+import { ConversationFindManyArgs } from "../../conversation/base/ConversationFindManyArgs";
+import { Conversation } from "../../conversation/base/Conversation";
+import { SessionFindManyArgs } from "../../session/base/SessionFindManyArgs";
+import { Session } from "../../session/base/Session";
 import { UserService } from "../user.service";
 @graphql.Resolver(() => User)
 export class UserResolverBase {
@@ -85,5 +89,33 @@ export class UserResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Conversation], { name: "conversations" })
+  async findConversations(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: ConversationFindManyArgs
+  ): Promise<Conversation[]> {
+    const results = await this.service.findConversations(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => [Session], { name: "sessions" })
+  async findSessions(
+    @graphql.Parent() parent: User,
+    @graphql.Args() args: SessionFindManyArgs
+  ): Promise<Session[]> {
+    const results = await this.service.findSessions(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

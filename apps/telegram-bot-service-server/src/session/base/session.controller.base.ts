@@ -31,11 +31,39 @@ export class SessionControllerBase {
     @common.Body() data: SessionCreateInput
   ): Promise<Session> {
     return await this.service.createSession({
-      data: data,
+      data: {
+        ...data,
+
+        conversation: data.conversation
+          ? {
+              connect: data.conversation,
+            }
+          : undefined,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
+        chatContext: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -48,9 +76,23 @@ export class SessionControllerBase {
     return this.service.sessions({
       ...args,
       select: {
+        chatContext: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -64,9 +106,23 @@ export class SessionControllerBase {
     const result = await this.service.session({
       where: params,
       select: {
+        chatContext: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -87,11 +143,39 @@ export class SessionControllerBase {
     try {
       return await this.service.updateSession({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          conversation: data.conversation
+            ? {
+                connect: data.conversation,
+              }
+            : undefined,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
+          chatContext: true,
+
+          conversation: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -114,9 +198,23 @@ export class SessionControllerBase {
       return await this.service.deleteSession({
         where: params,
         select: {
+          chatContext: true,
+
+          conversation: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

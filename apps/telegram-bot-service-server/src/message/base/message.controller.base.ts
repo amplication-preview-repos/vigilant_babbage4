@@ -31,10 +31,27 @@ export class MessageControllerBase {
     @common.Body() data: MessageCreateInput
   ): Promise<Message> {
     return await this.service.createMessage({
-      data: data,
+      data: {
+        ...data,
+
+        conversation: data.conversation
+          ? {
+              connect: data.conversation,
+            }
+          : undefined,
+      },
       select: {
+        content: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        senderId: true,
         updatedAt: true,
       },
     });
@@ -48,8 +65,17 @@ export class MessageControllerBase {
     return this.service.messages({
       ...args,
       select: {
+        content: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        senderId: true,
         updatedAt: true,
       },
     });
@@ -64,8 +90,17 @@ export class MessageControllerBase {
     const result = await this.service.message({
       where: params,
       select: {
+        content: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
+        senderId: true,
         updatedAt: true,
       },
     });
@@ -87,10 +122,27 @@ export class MessageControllerBase {
     try {
       return await this.service.updateMessage({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          conversation: data.conversation
+            ? {
+                connect: data.conversation,
+              }
+            : undefined,
+        },
         select: {
+          content: true,
+
+          conversation: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
+          senderId: true,
           updatedAt: true,
         },
       });
@@ -114,8 +166,17 @@ export class MessageControllerBase {
       return await this.service.deleteMessage({
         where: params,
         select: {
+          content: true,
+
+          conversation: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
+          senderId: true,
           updatedAt: true,
         },
       });

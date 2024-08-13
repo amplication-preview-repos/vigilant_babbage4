@@ -11,13 +11,33 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional, MaxLength } from "class-validator";
+import { ConversationUpdateManyWithoutUsersInput } from "./ConversationUpdateManyWithoutUsersInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { SessionUpdateManyWithoutUsersInput } from "./SessionUpdateManyWithoutUsersInput";
 
 @InputType()
 class UserUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => ConversationUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => ConversationUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => ConversationUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  conversations?: ConversationUpdateManyWithoutUsersInput;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -73,6 +93,18 @@ class UserUpdateInput {
     nullable: true,
   })
   roles?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => SessionUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => SessionUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => SessionUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  sessions?: SessionUpdateManyWithoutUsersInput;
 
   @ApiProperty({
     required: false,

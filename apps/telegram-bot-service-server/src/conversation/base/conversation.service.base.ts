@@ -10,7 +10,14 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Conversation as PrismaConversation } from "@prisma/client";
+
+import {
+  Prisma,
+  Conversation as PrismaConversation,
+  Message as PrismaMessage,
+  Session as PrismaSession,
+  User as PrismaUser,
+} from "@prisma/client";
 
 export class ConversationServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,5 +52,35 @@ export class ConversationServiceBase {
     args: Prisma.ConversationDeleteArgs
   ): Promise<PrismaConversation> {
     return this.prisma.conversation.delete(args);
+  }
+
+  async findMessages(
+    parentId: string,
+    args: Prisma.MessageFindManyArgs
+  ): Promise<PrismaMessage[]> {
+    return this.prisma.conversation
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .messages(args);
+  }
+
+  async findSessions(
+    parentId: string,
+    args: Prisma.SessionFindManyArgs
+  ): Promise<PrismaSession[]> {
+    return this.prisma.conversation
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .sessions(args);
+  }
+
+  async getUser(parentId: string): Promise<PrismaUser | null> {
+    return this.prisma.conversation
+      .findUnique({
+        where: { id: parentId },
+      })
+      .user();
   }
 }

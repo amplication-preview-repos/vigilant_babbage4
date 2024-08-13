@@ -22,6 +22,12 @@ import { User } from "./User";
 import { UserFindManyArgs } from "./UserFindManyArgs";
 import { UserWhereUniqueInput } from "./UserWhereUniqueInput";
 import { UserUpdateInput } from "./UserUpdateInput";
+import { ConversationFindManyArgs } from "../../conversation/base/ConversationFindManyArgs";
+import { Conversation } from "../../conversation/base/Conversation";
+import { ConversationWhereUniqueInput } from "../../conversation/base/ConversationWhereUniqueInput";
+import { SessionFindManyArgs } from "../../session/base/SessionFindManyArgs";
+import { Session } from "../../session/base/Session";
+import { SessionWhereUniqueInput } from "../../session/base/SessionWhereUniqueInput";
 
 export class UserControllerBase {
   constructor(protected readonly service: UserService) {}
@@ -150,5 +156,174 @@ export class UserControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/conversations")
+  @ApiNestedQuery(ConversationFindManyArgs)
+  async findConversations(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<Conversation[]> {
+    const query = plainToClass(ConversationFindManyArgs, request.query);
+    const results = await this.service.findConversations(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+        title: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/conversations")
+  async connectConversations(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: ConversationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      conversations: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/conversations")
+  async updateConversations(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: ConversationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      conversations: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/conversations")
+  async disconnectConversations(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: ConversationWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      conversations: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/sessions")
+  @ApiNestedQuery(SessionFindManyArgs)
+  async findSessions(
+    @common.Req() request: Request,
+    @common.Param() params: UserWhereUniqueInput
+  ): Promise<Session[]> {
+    const query = plainToClass(SessionFindManyArgs, request.query);
+    const results = await this.service.findSessions(params.id, {
+      ...query,
+      select: {
+        chatContext: true,
+
+        conversation: {
+          select: {
+            id: true,
+          },
+        },
+
+        createdAt: true,
+        id: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/sessions")
+  async connectSessions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: SessionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      sessions: {
+        connect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/sessions")
+  async updateSessions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: SessionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      sessions: {
+        set: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/sessions")
+  async disconnectSessions(
+    @common.Param() params: UserWhereUniqueInput,
+    @common.Body() body: SessionWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      sessions: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateUser({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

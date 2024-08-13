@@ -9,5 +9,68 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class ConversationCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { MessageCreateNestedManyWithoutConversationsInput } from "./MessageCreateNestedManyWithoutConversationsInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { SessionCreateNestedManyWithoutConversationsInput } from "./SessionCreateNestedManyWithoutConversationsInput";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
+
+@InputType()
+class ConversationCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => MessageCreateNestedManyWithoutConversationsInput,
+  })
+  @ValidateNested()
+  @Type(() => MessageCreateNestedManyWithoutConversationsInput)
+  @IsOptional()
+  @Field(() => MessageCreateNestedManyWithoutConversationsInput, {
+    nullable: true,
+  })
+  messages?: MessageCreateNestedManyWithoutConversationsInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => SessionCreateNestedManyWithoutConversationsInput,
+  })
+  @ValidateNested()
+  @Type(() => SessionCreateNestedManyWithoutConversationsInput)
+  @IsOptional()
+  @Field(() => SessionCreateNestedManyWithoutConversationsInput, {
+    nullable: true,
+  })
+  sessions?: SessionCreateNestedManyWithoutConversationsInput;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  title?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
+}
+
 export { ConversationCreateInput as ConversationCreateInput };

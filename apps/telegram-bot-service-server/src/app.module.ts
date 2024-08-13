@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
-import { ConversationModule } from "./conversation/conversation.module";
 import { MessageModule } from "./message/message.module";
+import { ConversationModule } from "./conversation/conversation.module";
 import { SessionModule } from "./session/session.module";
 import { UserModule } from "./user/user.module";
+import { ChatGptModuleModule } from "./chatgptmodule/chatgptmodule.module";
+import { TelegramModuleModule } from "./telegrammodule/telegrammodule.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -15,10 +17,12 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 @Module({
   controllers: [],
   imports: [
-    ConversationModule,
     MessageModule,
+    ConversationModule,
     SessionModule,
     UserModule,
+    ChatGptModuleModule,
+    TelegramModuleModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

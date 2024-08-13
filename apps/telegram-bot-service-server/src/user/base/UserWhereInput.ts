@@ -11,13 +11,27 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringNullableFilter } from "../../util/StringNullableFilter";
+import { ConversationListRelationFilter } from "../../conversation/base/ConversationListRelationFilter";
+import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { StringFilter } from "../../util/StringFilter";
+import { SessionListRelationFilter } from "../../session/base/SessionListRelationFilter";
 
 @InputType()
 class UserWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => ConversationListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => ConversationListRelationFilter)
+  @IsOptional()
+  @Field(() => ConversationListRelationFilter, {
+    nullable: true,
+  })
+  conversations?: ConversationListRelationFilter;
+
   @ApiProperty({
     required: false,
     type: StringNullableFilter,
@@ -61,6 +75,18 @@ class UserWhereInput {
     nullable: true,
   })
   lastName?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => SessionListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => SessionListRelationFilter)
+  @IsOptional()
+  @Field(() => SessionListRelationFilter, {
+    nullable: true,
+  })
+  sessions?: SessionListRelationFilter;
 
   @ApiProperty({
     required: false,

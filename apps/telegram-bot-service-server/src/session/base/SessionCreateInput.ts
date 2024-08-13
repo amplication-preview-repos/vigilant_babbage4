@@ -9,5 +9,51 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class SessionCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsJSONValue } from "../../validators";
+import { IsOptional, ValidateNested } from "class-validator";
+import { GraphQLJSON } from "graphql-type-json";
+import { InputJsonValue } from "../../types";
+import { ConversationWhereUniqueInput } from "../../conversation/base/ConversationWhereUniqueInput";
+import { Type } from "class-transformer";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
+
+@InputType()
+class SessionCreateInput {
+  @ApiProperty({
+    required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  chatContext?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => ConversationWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => ConversationWhereUniqueInput)
+  @IsOptional()
+  @Field(() => ConversationWhereUniqueInput, {
+    nullable: true,
+  })
+  conversation?: ConversationWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
+}
+
 export { SessionCreateInput as SessionCreateInput };
